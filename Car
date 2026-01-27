@@ -1,0 +1,75 @@
+import java.awt.Color;
+
+public abstract class Car {
+
+    protected int nrDoors;
+    protected Color color;
+    protected double enginePower;
+    protected double currentSpeed;
+    protected String modelName;
+
+
+    public Car(int nrDoors, Color color, double enginePower, String modelName) {
+        this.nrDoors = nrDoors;
+        this.color = color;
+        this.enginePower = enginePower;
+        this.modelName = modelName;
+        this.currentSpeed = 0;
+    }
+
+    public int getNrDoors() {
+        return nrDoors;
+    }
+
+    public double getEnginePower() {
+        return enginePower;
+    }
+
+    public double getCurrentSpeed() {
+        return currentSpeed;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void startEngine() {
+        currentSpeed = 0.1;
+    }
+
+    public void stopEngine() {
+        currentSpeed = 0;
+    }
+
+    public void gas(double amount) {
+        if (amount >= 0 && amount <= 1) {
+            incrementSpeed(amount);
+        }
+    }
+
+    public void brake(double amount) {
+        if (amount >= 0 && amount <= 1) {
+            decrementSpeed(amount);
+        }
+    }
+
+    protected void incrementSpeed(double amount) {
+        currentSpeed = Math.min(
+                currentSpeed + speedFactor() * amount,
+                enginePower
+        );
+    }
+
+    protected void decrementSpeed(double amount) {
+        currentSpeed = Math.max(
+                currentSpeed - speedFactor() * amount,
+                0
+        );
+    }
+
+    protected abstract double speedFactor();
+}
