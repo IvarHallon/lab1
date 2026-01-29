@@ -1,0 +1,132 @@
+//Saab och volvo blir subklasser till superklassen Cars
+// Cars implementerar interface Movable
+
+import java.awt.Color;
+
+public abstract class Cars implements Movable {
+/** Why are types and variables protected in java? (protect = access modifier)
+Protected variables create liability in all classes
+ -> cant be accessed from outside the class
+ -> can be accessed by derived child classes
+ -> bara subklasserna kan använda de alltså varibalerna (instansvariabler)
+//Varför inte inte göra de private?
+ **/
+    // Attributen, genensamma egenskaper de två subklasserna har
+    protected int nrDoors;
+    protected Color color;
+    protected double enginePower;
+    protected double currentSpeed;
+    protected String modelName;
+
+    // position coordinates
+    protected double x;
+    protected double y;
+
+    // direction
+    protected enum Direction {
+        NORTH, EAST, SOUTH, WEST;
+    }
+    // baspostion av bilen (bilarna)
+    protected Direction direction = Direction.NORTH;
+
+
+    public Cars(int nrDoors, Color color, double enginePower, String modelName) {
+        //kasta exceptions för dörrar och engienPower
+        this.nrDoors = nrDoors;
+        this.color = color;
+        this.enginePower = enginePower;
+        this.modelName = modelName;
+        this.currentSpeed = 0;
+    }
+
+
+    // move är beroende av riktning och positon
+    //- riktning : om den är North, South, East, West
+    // -position : är korrdinaterna så x och y
+    // Ska en metod move
+    public void move () {
+        switch (direction) {
+            case NORTH -> y += currentSpeed;
+            case SOUTH -> y -= currentSpeed;
+            case EAST -> x += currentSpeed;
+            case WEST -> x -= currentSpeed;
+        }
+
+    }
+    // Metod turnleft
+    public void turnLeft (){
+        switch (direction) {
+            case NORTH -> WEST;
+            case WEST -> NORTH;
+            case EAST -> SOUTH;
+            case SOUTH -> EAST;
+        }
+    }
+
+    // Metod turnright
+    public void turnRight (){
+        switch (direction) {     //retunerar en av de enum-konstanterna
+            case NORTH -> EAST;
+            case EAST -> SOUTH;
+            case SOUTH -> WEST;
+            case WEST -> NORTH;
+        }
+    }
+
+    public int getNrDoors() {
+        return nrDoors;
+    }
+
+    public double getEnginePower() {
+        return enginePower;
+    }
+
+    public double getCurrentSpeed() {
+        return currentSpeed;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void startEngine() {
+        currentSpeed = 0.1;
+    }
+
+    public void stopEngine() {
+        currentSpeed = 0;
+    }
+
+    public void gas(double amount) {
+        if (amount >= 0 && amount <= 1) {
+            incrementSpeed(amount);
+        }
+    }
+
+    public void brake(double amount) {
+        if (amount >= 0 && amount <= 1) {
+            decrementSpeed(amount);
+        }
+    }
+
+    protected void incrementSpeed(double amount) {
+        currentSpeed = Math.min(
+                currentSpeed + speedFactor() * amount,
+                enginePower
+        );
+    }
+
+    protected void decrementSpeed(double amount) {
+        currentSpeed = Math.max(
+                currentSpeed - speedFactor() * amount,
+                0
+        );
+    }
+
+    protected abstract double speedFactor();
+
+}
