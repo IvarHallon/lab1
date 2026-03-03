@@ -20,19 +20,24 @@ public class Workshop<T extends AbstractCar> {
     }
 
     // Hämta ut bil
-    public T removeCar() {
+    public void removeCar(T car) {
         if (cars.isEmpty()) {
             throw new IllegalStateException("Workshop is empty");
         }
-        return cars.remove(cars.size() - 1);
+        cars.remove(car);
     }
 
     public int getNumberOfCars() {
         return cars.size();
     }
 
+    public boolean contains(T volvo) {
+
+        return false;
+    }
+
+
+    //Workshop<Volvo240> volvoWorkshop = new Workshop<>(3);
+
+
 }
-
- // Workshop<Volvo240> volvoWorkshop = new Workshop<>(3);
-
-

@@ -2,40 +2,69 @@ import java.awt.*;
 
 public class Scania extends AbstractCar {
     public Scania () {
-        super(2, 450, Color.BLUE, "Scania");// constructor
+        super(2, 450, Color.BLUE, "Scania");
         angle = 0;
     }
-    private int angle; //current positon på flanken
-    public void flank (int v) { //ändringen i flaket
-        if (this.getCurrentSpeed() > 0.01) throw new
-                IllegalArgumentException("Lastbilen rör på sig!!!");
-        if ( angle + v < 0 || angle + v > 70) throw new
-                IllegalArgumentException("vinkeln ska var v > 0 men v < 70 grader");
-        angle = (angle + v); // den uppdaterade vinkeln
+
+    private int angle; // nuvarande vinkel på flaket (0..70)
+
+    //Höjer/sänker flaket med v grader. Kastar exception vid regelbrott.
+
+    public void flank (int v) {
+        if (this.getCurrentSpeed() > 0.01)
+            throw new IllegalArgumentException("Lastbilen rör på sig");
+        if (angle + v < 0 || angle + v > 70)
+            throw new IllegalArgumentException("vinkeln ska vara 0..70 grader");
+        angle = angle + v;
     }
-    @Override //ersätter (implementerar) den abstrakta metoden speedFactor() som finns i AbstractCar
-    protected double speedFactor() { // method
+
+    @Override
+    protected double speedFactor() {
         return getEnginePower() * 0.01;
     }
-    public int getangle () { //method
+
+
+    public int getangle () {
         return angle;
     }
-    @Override // får inte gasa när flanket är raised
+
+    @Override
     public void gas(double amount) {
-        if (angle != 0) throw new IllegalArgumentException( "Flaket är höjt!!");
-        super.gas(amount); // den fortsätter gave om kvaret inte uppfylls!
+        // Om flaket inte är helt nere = ignorera gas
+        if (angle != 0) return;
+        super.gas(amount);
     }
-//Uppgift 1: Extensibility : KLAR!!!!!
-//method: flank som kan höjas och sänkas
-// rör sig i y axeln y + och y- eller kan man ha en enum upp och ner
-// läge: flaken som kan endast få upp och ner
-//method: logik för att räkna ut vinkeln
-/* villkor för vinkeln :
--> vinkeln på flaken begränsas, kan endast vara mellan 0 eller höögre än 70
-grader
--> vinkeln ändra endast när lastbilen är stilla, då v > 0
--> skicka en illegal expception för om bilen rör sig och v > 0
-->
-*/
-// Uppgift 2: Mer Extensibilty
+
+
+
+    //flaket helt nere (angle == 0)?
+    public boolean isBedDown() {
+        return angle == 0;
+    }
+
+    //Försök höja flaket 10°. Returnerar true om lyckat, annars false
+    public boolean tryRaiseBed() {
+        if (getCurrentSpeed() > 0.01) return false;  // måste stå still
+        if (angle + 10 > 70) return false;           // max 70°
+        angle += 10;
+        return true;
+    }
+
+    // Försök sänka flaket 10°. Returnerar true om lyckat, annars false.
+    public boolean tryLowerBed() {
+        if (getCurrentSpeed() > 0.01) return false;  // måste stå still
+        if (angle - 10 < 0) return false;            // min 0°
+        angle -= 10;
+        return true;
+    }
+
+    /**
+     * Sänk flaket helt till 0° (om stillastående).
+     * Får att vara säker på att bilen kan börja röra sig igen efter "Lower bed".
+     */
+    public boolean lowerBedFully() {
+        if (getCurrentSpeed() > 0.01) return false;
+        angle = 0;
+        return true;
+    }
 }
